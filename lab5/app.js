@@ -6,15 +6,44 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
+var fs = require('fs')
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
- });
+});
 
- app.get("/getitems", (req, res, next) => {
-  res.json(["Tony","Lisa","Michael","Ginger","Food"]);
- });
- 
+//HTTP GET /getitems
+app.get("/getitems", function (req, res, next) {
+  // Reading Synchrously 
+  var files = require("fs");
+  var cont = fs.readFileSync("users.json");
+
+  console.log("Output Content : \n" + cont);
+
+  res.json([JSON.parse(cont)]);
+});
+
+//HTTP POST
+app.post("/addItem", function (req, res) {
+  var cont = fs.readFileSync("users.json");
+
+});
+
+//HTTP DELETE
+app.get("/deleteitem/:id", function (req, res) {
+
+  // First read existing users.
+  fs.readFile(__dirname + "/" + "users.json", 'utf8', function (err, data) {
+    data = JSON.parse(data);
+    delete data["people" + req.params.id];
+    console.log(data);
+    res.end(JSON.stringify(data));
+  });
+})
+
+
+///////////////////////////////////////////////////////////////////////////////////
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -29,12 +58,12 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
