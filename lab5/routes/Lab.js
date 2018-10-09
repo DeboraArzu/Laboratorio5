@@ -30,10 +30,6 @@ router.get('/', function(req, res, next) {
 
 //HTTP GET /getitems
 router.get("/people", function (req, res, next) {
-  // Reading Synchrously 
-  //var files = require("fs");
-  //var cont = fs.readFileSync("users.json");
-  //console.log("Output Content : \n" + cont);
   res.json(people);
 });
 
