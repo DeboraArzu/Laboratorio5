@@ -4,42 +4,70 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/Lab');
 var app = express();
-var fs = require('fs')
+var router = express.Router();
+//var fs = require('fs')
 
+
+var people = {
+  "people": [{
+    id: 1,
+    name: "John",
+    age: "23",
+    profession: "Teacher"
+    
+  },
+  {
+    id:2,
+    name: "Sara",
+    age: "22",
+    profession: "Ingineer"
+  },
+  {
+    id:3,
+    name: "Carlos",
+    age: "26",
+    profession: "Doctor"
+  }]
+}
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
 
 //HTTP GET /getitems
-app.get("/getitems", function (req, res, next) {
+app.get("/people", function (req, res, next) {
   // Reading Synchrously 
-  var files = require("fs");
-  var cont = fs.readFileSync("users.json");
-
-  console.log("Output Content : \n" + cont);
-
-  res.json([JSON.parse(cont)]);
+  //var files = require("fs");
+  //var cont = fs.readFileSync("users.json");
+  //console.log("Output Content : \n" + cont);
+  res.json(people);
 });
 
 //HTTP POST
-app.post("/addItem", function (req, res) {
-  var cont = fs.readFileSync("users.json");
-
+router.post('/post/', function(req, res, next) {
+  const person = {
+    id: people.people.length + 1
+    ,name:req.body.name
+    ,age:req.body.age
+    ,profession:req.body.profession
+  }
+    people.people.push(person);
+    res.status(201).send(person);
 });
 
 //HTTP DELETE
-app.get("/deleteitem/:id", function (req, res) {
+app.delete('/deletepeople/:id', function (req, res,next) {
+  var id = req.params.id;
+  console.log(id);
+  const person = people.people.find(p => p.id == id);
+  if(!person) res.status(404).send('No id found');
+  const index = people.people.indexOf(person);
+  people.people.splice(index,1);
+  res.status(204).send(person);
+});
 
-  // First read existing users.
-  fs.readFile(__dirname + "/" + "users.json", 'utf8', function (err, data) {
-    data = JSON.parse(data);
-    delete data["people" + req.params.id];
-    console.log(data);
-    res.end(JSON.stringify(data));
-  });
-})
+//HTTP PUT
 
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -74,3 +102,4 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
+module.exports = router;
