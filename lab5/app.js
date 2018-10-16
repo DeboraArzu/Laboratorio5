@@ -7,7 +7,6 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/Lab');
 var app = express();
 
-
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
